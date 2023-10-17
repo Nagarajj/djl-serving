@@ -10,16 +10,16 @@
 # or in the "LICENSE.txt" file accompanying this file. This file is distributed on an "AS IS"
 # BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied. See the License for
 # the specific language governing permissions and limitations under the License.
-
+import json
 import logging
 import os
 import sys
 
-from .arg_parser import ArgParser
-from .inputs import Input
-from .outputs import Output
-from .np_util import to_nd_list
-from .service_loader import load_model_service
+from djl_python.arg_parser import ArgParser
+from djl_python.inputs import Input
+from djl_python.outputs import Output
+from djl_python.np_util import to_nd_list
+from djl_python.service_loader import load_model_service
 
 
 def create_request(input_files, parameters):
@@ -79,6 +79,12 @@ def create_text_request(text: str, key: str = None) -> Input:
     request.properties["device_id"] = "-1"
     request.properties["content-type"] = "text/plain"
     request.content.add(key=key, value=text.encode("utf-8"))
+    return request
+
+def create_json_request(text: dict, key: str = None) -> Input:
+    request = Input()
+    request.properties["content-type"] = "application/json"
+    request.content.add(key=key, value=json.dumps(text).encode("utf-8"))
     return request
 
 
